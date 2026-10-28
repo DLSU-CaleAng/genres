@@ -17,7 +17,8 @@ const CONFIG = {
     cassettePhysics: true,  // floating + draggable home cassette
     reels: true,            // reels turn with scroll
     visualizer: false,       // audio-reactive bars (needs http://, see README)
-    customCursor: true      // cassette-style cursor (desktop mouse only)
+    customCursor: true,      // cassette-style cursor (desktop mouse only)
+    touchTrail: true
   },
   intro: {
     // Assets
@@ -72,6 +73,7 @@ const CONFIG = {
   // Debug helpers. Set enabled to false before launch, or visitors can replay the intro too.
   // replayIntroKey is compared as typed, so 'I' means Shift+I.
   debug: { enabled: true, replayIntroKey: 'I' },
+  currency: '₱',
   orderFormUrl: 'https://forms.gle/fo1NWeFeumJz2D8x5' // EDIT HERE / PLACEHOLDAH
 };
 
@@ -84,8 +86,8 @@ const PRODUCTS = [
     title: 'Bewitched',
     artist: 'Laufey',
     description: 'Laufey’s Bewitched is a gorgeous blend of jazz and bedroom pop that captures exactly what it feels like to fall in love. She made the album to prove that orchestral music isnt just for history books, but is the perfect backdrop for the messy feelings of navigating your twenties. Between the sweeping strings and her warm vocals, it feels like an intimate late-night conversation, breathing fresh life into an old-school sound for a whole new generation.',
-    image: 'assets/albums/album-one.jpg',                // artwork for the fixed background
-    animation: 'assets/albums/bewitched.webp',    // cassette image or animation
+    image: 'assets/albums/bewitched.webp',                // artwork for the fixed background
+    animation: 'assets/albums/bewitched.png',    // cassette image or animation
     squareBackground: '#8b4e22',                          // color/gradient behind the cassette
     font: "'Playfair Display', Georgia, serif",         // product font + fallbacks
     theme: { bg: '#f7e7d6', text: '#3b2a20', accent: '#b5533c', accent2: '#7d8f69', surface: '#fffaf3', surfaceText: '#3b2a20' },
@@ -99,8 +101,8 @@ const PRODUCTS = [
     title: 'This Is How Tomorrow Moves',
     artist: 'beabadoobee',
     description: '90’s and 2000s indie music, folk ballads, jazzy undertones, and dream pop, building on Beabadoobee’s earlier lo-fi bedroom pop roots. This album serves as an intimate journal on self-acceptance, growth, and navigating through early adulthood—a shift that earned Beabadoobee her very first number-one debut on the UK Albums Chart.',
-    image: 'assets/albums/album-two.jpg',
-    animation: 'assets/albums/tomorrow.webp',
+    image: 'assets/albums/tomorrow.webp',
+    animation: 'assets/albums/tomorrow.png',
     squareBackground: '#f1d8e3',
     font: "'Syne Mono', Impact, sans-serif",
     theme: { bg: '#f6e4c2', text: '#ca8e55', accent: '#f4d9bb', accent2: '#7d8f69', surface: '#3e3858', surfaceText: '#e2cfc4' },
@@ -111,17 +113,17 @@ const PRODUCTS = [
   },
   {
     id: 'album-three',
-    title: 'Pony',
+    title: 'Who Cares?',
     artist: 'Rex Orange County',
-    description: 'Rex Orange County’s 2019 indie-pop album Pony strips back the noise to process fame, mental health, and growing up through upbeat synths and raw vulnerability. From self-doubting anthems like "10/10" to orchestral high points like "Pluto Projector," it is an honest, emotionally rich journey from feeling like a five to hoping for a ten.',
+    description: 'Indie pop, bedroom pop, alternative pop, and orchestral influences, blending upbeat melodies, playful production, and introspective songwriting. The album explores love, heartbreak, loneliness, and emotional uncertainty, balancing cheerful instrumentals with vulnerable reflections on relationships and self-worth. Through its contrast between bright, energetic arrangements and bittersweet lyrics, it captures the experience of navigating young adulthood and learning to move forward despite emotional setbacks.',
     image: 'assets/albums/album-three.jpg',
-    animation: 'assets/albums/pony.webp',
+    animation: 'assets/albums/whocares.webp',
     squareBackground: '#f2eded',
     font: "'Fraunces', Georgia, serif",
-    theme: { bg: '#e5cfb8', text: '#3b2a20', accent: '#e77a2d', accent2: '#697b8f', surface: '#d8ddeb', surfaceText: '#202b3b' },
-    artOpacity: 0.25, artTint: '#d38532',
+    theme: { bg: '#d3c6a2', text: '#193723', accent: '#e8d3e0', accent2: '#697b8f', surface: '#aeb7a6', surfaceText: '#193723' },
+    artOpacity: 0.30, artTint: '#d3c6a2',
     songs: ["10/10", "Always", "Laser Lights", "Face to Face", "Stressed Out", "Never Had the Balls", "Pluto Projector", "Every Way", "It Gets Better", "It's Not the Same Anymore"],
-    featuredAudio: 'assets/audio/plutoprojector.mp3',
+    featuredAudio: 'assets/audio/shade.mp3',
     foregroundGif: ''
   },
     {
@@ -129,8 +131,8 @@ const PRODUCTS = [
     title: 'NEVER ENOUGH',
     artist: 'Daniel Ceasar',
     description: 'Alternative R&B, neo-soul, gospel, and soul influences, blending lush harmonies, atmospheric production, and intimate vocals. The album explores love, longing, self-doubt, and emotional vulnerability, creating a reflective journey through complicated relationships and the desire for deeper connection, while balancing stripped-back ballads with rich, layered arrangements.',
-    image: 'assets/albums/album-four.jpg',
-    animation: 'assets/albums/neverenough.jpg',
+    image: 'assets/albums/neverenough.jpg',
+    animation: 'assets/albums/neverenough.webp',
     squareBackground: '#200962',
     font: "'DM Serif Display', Georgia, serif",
     theme: { bg: '#040817', text: '#d2dff4', accent: '#164cf4', accent2: '#72bef8', surface: '#0c1a3a', surfaceText: '#a4bfe8' },
@@ -143,14 +145,14 @@ const PRODUCTS = [
     id: 'album-five',
     title: 'Customize your own!',
     artist: 'And most importantly..',
-    description: 'Pick your favorite album and get it customized if and only if you are one of our TOP TEN buyers',
+    description: 'Pick your favorite album and get it customized if you bought at least one of our keychain variants.',
     image: 'assets/albums/album-one.jpg',                // artwork for the fixed background
-    animation: 'assets/question.png',    // cassette image or animation
+    animation: 'assets/albums/mystery.webp',    // cassette image or animation
     squareBackground: '#000000',                          // color/gradient behind the cassette
     font: "'Archivo Black', Georgia, serif",         // product font + fallbacks
     theme: { bg: '#f4efe6', text: '#1b3a5c', accent: '#d94f30', accent2: '#1b3a5c', surface: '#f4efe6', surfaceText: '#303036' },
     artOpacity: 0.25, artTint: '#f4efe6',
-    songs: ['Top 10 buyers'],             // add or remove titles freely
+    songs: ['you seem pretty sad for a girl so in love', 'The Life Of A Showgirl', 'I’m The Problem', 'Dandelion', 'The Great Divide', 'HABIBTI', 'The Art Of Loving', 'Stick Season', 'Palace For The People', 'ICEMAN'],             // add or remove titles freely
     featuredAudio: 'assets/what-i-like.mp3',           // '' = silence for this album
     foregroundGif: ''              // optional but looks nice hehe; '' = no overlay
   },
@@ -158,6 +160,8 @@ const PRODUCTS = [
 
 // Products inherit these defaults for anything they do not define. theme {} = use the default theme.
 const PRODUCT_DEFAULTS = {
+  artScale: 1.65,
+  price: 45,
   font: "'Inter', system-ui, sans-serif", squareBackground: '#ddd', theme: {}, image: '', animation: '',
   artRatio: '3 / 2', reels: { src: '', leftX: 0.3, rightX: 0.7, y: 0.42, size: 0.2 }, // see CONFIG.images
   artOpacity: 0.3, artTint: 'transparent', songs: [], featuredAudio: '', foregroundGif: ''
@@ -166,11 +170,11 @@ PRODUCTS.forEach((p, i) => { PRODUCTS[i] = { ...PRODUCT_DEFAULTS, ...p, theme: {
 
 // Home page members. Cards alternate left/right automatically/dynamically. So very kakoi.
 const MEMBERS = [
-  { name: 'Cale Ang', role: 'Project Leader / Social Science Head / Software Developer / Co-Math Head / Animator / Web Designer', description: 'Good day everybody, welcome to this wonderful website where we sell keychains from your favorite album. Hope you enjoy the website and use it as inspiration to create websites even cooler than this! Take it away team.', portrait: 'assets/members/magtape.png' },
+  { name: 'Cale Ang', role: 'Project Leader / Social Science Head / Software Developer / Co-Math Head / Animator / Web Designer', description: 'Good day everybody, welcome to this wonderful website where we sell keychains from your favorite album. Hope you enjoy the website and use it as inspiration to create websites even cooler than this! Take it away team.', portrait: 'assets/members/disc.jpg' },
   { name: 'Gabrielle Tuazon', role: 'Excecutive / Logistics Coordinator / Financer / Documentor', description: 'Hi everyone! Welcome to our website! I’m Brielle Tuazon. Thank you so much for choosing us to order keychains from! Don’t hesitate to reach out if you have a question. We all hope you like the products and we appreciate the support!', portrait: 'assets/members/guitar.jpg' },
-  { name: 'Sebastian Valencia', role: 'Mathematics Head / Co-Financer / Product Overseerer / Coordinator', description: 'What is of the up 🤩I helped with the google forms 😎 Come buy some of our keychains!! ❤️❤️', portrait: 'assets/members/drum.webp' },
+  { name: 'Sebastian Valencia', role: 'Mathematics Head / Co-Financer / Product Overseerer / Coordinator', description: 'What is of the up 🤩I helped with the google forms 😎 Come buy some of our keychains!! ❤️❤️', portrait: 'assets/members/drums.jpg' },
   { name: 'Jia Mapanoo', role: 'Material Handler / Quality Overseerer / Product Description Writer', description: 'Hello everybody and welcome! I am the 4th member of the genres Jia Mapanoo, we are officially open and I am so eager to share what our shop has to offer. I hope you guys find something you love from our shop and make sure you stop by to say hello to us in our stand!', portrait: 'assets/members/violin.jpg' },
-  { name: 'Leida Vidal', role: 'Purchasing Agent / Materials Planner / Product Sourcer', description: 'Greetings everyone! and welcome to our website. My name is Leida Vidal, a fellow member of the genres and i am ready and eager to serve you. I hope you will enjoy our site where you could view the different variations of our product and im very excited to sell you our products at our stand. See you there!', portrait: 'assets/members/headphone.jpg' }
+  { name: 'Leida Vidal', role: 'Purchasing Agent / Materials Planner / Product Sourcer', description: 'Greetings everyone! and welcome to our website. My name is Leida Vidal, a fellow member of the genres and i am ready and eager to serve you. I hope you will enjoy our site where you could view the different variations of our product and im very excited to sell you our products at our stand. See you there!', portrait: 'assets/members/microphone.jpg' }
 ];
 
 // ############################# HELPERS! ######################################################3
@@ -345,23 +349,53 @@ function setBackgroundArt(product) {
   }
 }
 
-// Wipe reveal (not a fade). Each entry is the fully hidden clip-path for that direction.
-const WIPE_HIDDEN = { left: 'inset(0 100% 0 0)', right: 'inset(0 0 0 100%)', down: 'inset(0 0 100% 0)' };
+const BRUSH = {
+  left:  { vertical: false, flip: false, size: '300% 100%', hidden: '100% 0%', shown: '0% 0%' },
+  right: { vertical: false, flip: true,  size: '300% 100%', hidden: '0% 0%',   shown: '100% 0%' },
+  down:  { vertical: true,  flip: false, size: '100% 300%', hidden: '0% 100%', shown: '0% 0%' }
+};
+
+// Draws a new ragged bristle edge every time, so no two reveals look the same.
+function brushMaskUrl(dir) {
+  const bands = 120, step = 100 / bands;
+  let wobble = 0, bars = '';
+  for (let i = 0; i < bands; i++) {
+    wobble = Math.max(-25, Math.min(25, wobble * 0.6 + (Math.random() - 0.5) * 30));
+    let edge = 150 + wobble;
+    if (Math.random() < 0.12) edge = Math.min(195, edge + Math.random() * 20);
+    const start = dir.flip ? 300 - edge : 0, at = i * step, thick = step + 0.6;
+    bars += dir.vertical
+      ? `<rect x="${at}" y="${start}" width="${thick}" height="${edge}"/>`
+      : `<rect x="${start}" y="${at}" width="${edge}" height="${thick}"/>`;
+  }
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${dir.vertical ? '0 0 100 300' : '0 0 300 100'}" preserveAspectRatio="none">${bars}</svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}
+
+function setMask(el, props) {
+  Object.entries(props).forEach(([name, value]) => {
+    el.style.setProperty('mask-' + name, value);
+    el.style.setProperty('-webkit-mask-' + name, value);
+  });
+}
+
 function showForeground(src) {
   const el = $('#foreground-gif');
-  const hidden = WIPE_HIDDEN[CONFIG.gifWipe.direction] || WIPE_HIDDEN.left;
+  const dir = BRUSH[CONFIG.gifWipe.direction] || BRUSH.left;
   const ms = reduceMotion ? 0 : CONFIG.gifWipe.durationMs;
-  if (!src) {                                   // no GIF: wipe the old one away
-    el.style.transition = `clip-path ${ms}ms ease`;
-    el.style.clipPath = hidden;
+  const slide = `mask-position ${ms}ms ease-in-out, -webkit-mask-position ${ms}ms ease-in-out`;
+  el.style.clipPath = 'none';
+  if (!src) {
+    el.style.transition = slide;
+    setMask(el, { position: dir.hidden });
     return;
   }
-  el.style.transition = 'none';                 // cut the old one instantly, then wipe the new one in
-  el.style.clipPath = hidden;
+  el.style.transition = 'none';
+  setMask(el, { image: brushMaskUrl(dir), size: dir.size, repeat: 'no-repeat', position: dir.hidden });
   el.style.backgroundImage = `url("${src}")`;
-  void el.offsetWidth;                          // forces the browser to apply the reset above
-  el.style.transition = `clip-path ${ms}ms ease`;
-  el.style.clipPath = 'inset(0)';
+  void el.offsetWidth;
+  el.style.transition = slide;
+  setMask(el, { position: dir.shown });
 }
 
 // The one place that reacts to "a different album is now active". [#######################3]
@@ -390,6 +424,7 @@ function renderProducts() {
     article.dataset.id = p.id;
     article.style.setProperty('--product-font', p.font);
     article.style.setProperty('--square-bg', p.squareBackground);
+    article.style.setProperty('--art-scale', p.artScale);
     if (p.theme.surface) article.style.setProperty('--surface', p.theme.surface);
     if (p.theme.surfaceText) article.style.setProperty('--surface-text', p.theme.surfaceText);
     article.innerHTML = `
@@ -469,6 +504,15 @@ const FocusTracker = {
     if (first && first.getBoundingClientRect().top > centerY + reach) setActiveProduct(null);
   }
 };
+
+function renderPrices() {
+  $('#price-list').innerHTML = PRODUCTS.map((p) => `
+    <li class="price-tag">
+      <span class="price-title">${p.title}</span>
+      <span class="price-artist">${p.artist}</span>
+      <span class="price-amount"><small>${CONFIG.currency}</small>${p.price}</span>
+    </li>`).join('');
+}
 
 function renderMembers() {
   MEMBERS.forEach((m, i) => {
@@ -791,6 +835,86 @@ function setupDebugKeys(afterIntro) {
   });
 }
 
+//Draggable Cassette
+
+function setupPlayerDrag() {
+  const player = $('#mini-player'), handle = $('#mini-art');
+  const KEY = 'genres-player-corner';
+  const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+  const view = () => document.documentElement;
+  const saved = storageGet(KEY);
+  player.dataset.corner = ['tl', 'tr', 'bl', 'br'].includes(saved) ? saved : 'bl';
+  handle.classList.add('is-draggable');
+  let start = null;
+
+  handle.addEventListener('pointerdown', (e) => {
+    if (start || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    start = { x: e.clientX, y: e.clientY, box: player.getBoundingClientRect() };
+    handle.setPointerCapture(e.pointerId);
+    player.style.transition = 'none';
+    player.classList.add('is-dragging');
+  });
+
+  handle.addEventListener('pointermove', (e) => {
+    if (!start) return;
+    const dx = clamp(e.clientX - start.x, -start.box.left, view().clientWidth - start.box.right);
+    const dy = clamp(e.clientY - start.y, -start.box.top, view().clientHeight - start.box.bottom);
+    player.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+  });
+
+  const drop = () => {
+    if (!start) return;
+    start = null;
+    player.classList.remove('is-dragging');
+    const from = player.getBoundingClientRect();
+    const corner = (from.top + from.height / 2 < view().clientHeight / 2 ? 't' : 'b')
+                 + (from.left + from.width / 2 < view().clientWidth / 2 ? 'l' : 'r');
+    player.style.transform = 'none';
+    player.dataset.corner = corner;
+    const to = player.getBoundingClientRect();
+    player.style.transform = `translate3d(${from.left - to.left}px, ${from.top - to.top}px, 0)`;
+    void player.offsetWidth;
+    player.style.transition = 'transform 350ms cubic-bezier(.2, .9, .3, 1.15)';
+    player.style.transform = 'translate3d(0, 0, 0)';
+    storageSet(KEY, corner);
+  };
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((type) => handle.addEventListener(type, drop));
+}
+
+const TouchTrail = {
+  start() {
+    if (!CONFIG.features.touchTrail || reduceMotion || !window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
+    const COUNT = 12, LIFE = 450, points = [], dots = [];
+    let running = false;
+    for (let i = 0; i < COUNT; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'trail-dot';
+      document.body.appendChild(dot);
+      dots.push(dot);
+    }
+    const draw = (now) => {
+      let alive = false;
+      dots.forEach((dot, i) => {
+        const p = points[i], life = p ? 1 - (now - p.time) / LIFE : 0;
+        if (life <= 0) { dot.style.opacity = 0; return; }
+        alive = true;
+        dot.style.opacity = life;
+        dot.style.transform = `translate3d(${p.x}px, ${p.y}px, 0) translate(-50%, -50%) scale(${(1 - i / COUNT) * life})`;
+      });
+      if (alive) requestAnimationFrame(draw); else running = false;
+    };
+    const add = (e) => {
+      const t = e.touches[0];
+      if (!t) return;
+      points.unshift({ x: t.clientX, y: t.clientY, time: performance.now() });
+      points.length = Math.min(points.length, COUNT);
+      if (!running) { running = true; requestAnimationFrame(draw); }
+    };
+    window.addEventListener('touchstart', add, { passive: true });
+    window.addEventListener('touchmove', add, { passive: true });
+  }
+};
+
 // actual compilation, genuiene hell HAHHAHAHAHAHHA
 function start() {
   // features switches that are pure CSS hooks - IGNOREEEEEE
@@ -804,6 +928,7 @@ function start() {
   $('#order-form-link').href = CONFIG.orderFormUrl.replace('?embedded=true', '');
 
   renderProducts();
+  renderPrices();
   const root = document.documentElement.style;            // intro icon settings
   root.setProperty('--intro-icon-size', CONFIG.intro.iconSize);
   root.setProperty('--intro-gap', CONFIG.intro.iconGap);
@@ -817,6 +942,8 @@ function start() {
   CassettePhysics.start();
   //Visualizer.start(); highkey decoration HAHHAHAH, too lazy to https it, ik I could get a github repository but no that takes too much work, imma just leave code as a theory
   CustomCursor.start();
+  TouchTrail.start();
+  setupPlayerDrag();
   setupNotes();
 
   $('#btn-play').addEventListener('click', () => Music.resume());

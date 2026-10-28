@@ -80,7 +80,7 @@ nav a:hover, nav a[aria-current="page"] { border-color: var(--accent); }
 .bg-cassette { position: absolute; right: 6%; bottom: 8%; width: 18vw; opacity: .35; transform: rotate(-12deg); }
 
 #foreground-gif { position: fixed; inset: 0; z-index: var(--z-foreground); pointer-events: none; /* never blocks clicks */
-  background-size: contain; background-repeat: no-repeat; background-position: center; clip-path: inset(0 100% 0 0); }
+  background-size: cover; background-repeat: no-repeat; background-position: center; clip-path: inset(0 100% 0 0); }
 
 .notes-layer { position: fixed; inset: 0; z-index: var(--z-notes); pointer-events: none; display: none;
   color: var(--accent); overflow: hidden; }
@@ -237,5 +237,38 @@ html.is-scroll-locked, html.is-scroll-locked body { overflow: hidden; overscroll
 /* Slow fade-out when the intro ends. The site is already rendering underneath, so this fade is the whole reveal. Drum rolls please. */
 #intro { transition: opacity var(--intro-fade-ms, 1800ms) ease; }
 #intro.is-leaving { opacity: 0; }
+
+/* Price stuff, like just price rendering */
+.price-board { width: min(1000px, 90%); margin: 0 auto; padding: 8rem 0 0; text-align: center; }
+.price-board + #product-list { padding-top: 6rem; }
+.price-board h2 { margin: 0; font-family: var(--font-display); font-size: clamp(2.5rem, 9vw, 6rem); line-height: .9; text-transform: uppercase; }
+.price-note { margin: .75rem 0 2.5rem; opacity: .75; }
+#price-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 1.75rem; margin: 0; padding: 0; list-style: none; }
+.price-tag { position: relative; min-width: 0; padding: 2rem 1rem 1.25rem; background: #ffd23f; color: #111; border: 3px solid #111; border-radius: var(--radius);
+  box-shadow: 6px 6px 0 #111; transform: rotate(-2deg); }
+.price-tag:nth-child(even) { transform: rotate(1.5deg); }
+.price-tag::before { content: ""; position: absolute; top: .65rem; left: 50%; width: .9rem; height: .9rem; margin-left: -.45rem;
+  border-radius: 50%; background: var(--bg); border: 3px solid #111; }
+.price-title { display: block; font-weight: 600; overflow-wrap: anywhere; }
+.price-artist { display: block; font-size: .9rem; opacity: .8; }
+.price-amount { display: block; margin-top: .5rem; font-family: var(--font-display); font-size: clamp(3rem, 8vw, 4.5rem); line-height: 1; }
+.price-amount small { margin-right: .1em; font: 600 .4em var(--font-body); vertical-align: top; }
+
+/* Cassette tape draggable and snaps to corners*/
+
+#mini-player[data-corner="bl"] { top: auto; right: auto; bottom: 1rem; left: 1rem; }
+#mini-player[data-corner="br"] { top: auto; left: auto; bottom: 1rem; right: 1rem; }
+#mini-player[data-corner="tl"] { bottom: auto; right: auto; top: 4.5rem; left: 1rem; }
+#mini-player[data-corner="tr"] { bottom: auto; left: auto; top: 4.5rem; right: 1rem; }
+#mini-art { cursor: grab; touch-action: none; user-select: none; }
+#mini-player.is-dragging #mini-art { cursor: grabbing; }
+#mini-player.is-dragging { will-change: transform; }
+
+.trail-dot { position: fixed; left: 0; top: 0; z-index: 200; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); pointer-events: none; opacity: 0; will-change: transform, opacity; }
+
+.product { --art-eff: var(--art-scale, 1); }
+.product-art { transform: scale(var(--art-eff)); }
+body.hover-on .product-visual:hover .product-art { transform: scale(calc(var(--art-eff) * 1.08)); }
+@media (max-width: 800px) { .product { --art-eff: min(var(--art-scale, 1), 1.1); } }
 
 /* welp, hope nobody reads this mess */
