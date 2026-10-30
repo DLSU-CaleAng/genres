@@ -74,6 +74,7 @@ const CONFIG = {
   // replayIntroKey is compared as typed, so 'I' means Shift+I.
   debug: { enabled: true, replayIntroKey: 'I' },
   currency: '₱',
+  keychainSize: { widthCm: 3.4, heightCm: 5.2 },
   orderFormUrl: 'https://forms.gle/fo1NWeFeumJz2D8x5' // EDIT HERE / PLACEHOLDAH
 };
 
@@ -117,7 +118,7 @@ const PRODUCTS = [
     artist: 'Rex Orange County',
     description: 'Indie pop, bedroom pop, alternative pop, and orchestral influences, blending upbeat melodies, playful production, and introspective songwriting. The album explores love, heartbreak, loneliness, and emotional uncertainty, balancing cheerful instrumentals with vulnerable reflections on relationships and self-worth. Through its contrast between bright, energetic arrangements and bittersweet lyrics, it captures the experience of navigating young adulthood and learning to move forward despite emotional setbacks.',
     image: 'assets/albums/album-three.jpg',
-    animation: 'assets/albums/whocares.webp',
+    animation: 'assets/albums/whocares.png',
     squareBackground: '#f2eded',
     font: "'Fraunces', Georgia, serif",
     theme: { bg: '#d3c6a2', text: '#193723', accent: '#e8d3e0', accent2: '#697b8f', surface: '#aeb7a6', surfaceText: '#193723' },
@@ -132,7 +133,7 @@ const PRODUCTS = [
     artist: 'Daniel Ceasar',
     description: 'Alternative R&B, neo-soul, gospel, and soul influences, blending lush harmonies, atmospheric production, and intimate vocals. The album explores love, longing, self-doubt, and emotional vulnerability, creating a reflective journey through complicated relationships and the desire for deeper connection, while balancing stripped-back ballads with rich, layered arrangements.',
     image: 'assets/albums/neverenough.jpg',
-    animation: 'assets/albums/neverenough.webp',
+    animation: 'assets/albums/neverenough.png',
     squareBackground: '#200962',
     font: "'DM Serif Display', Georgia, serif",
     theme: { bg: '#040817', text: '#d2dff4', accent: '#164cf4', accent2: '#72bef8', surface: '#0c1a3a', surfaceText: '#a4bfe8' },
@@ -147,7 +148,7 @@ const PRODUCTS = [
     artist: 'And most importantly..',
     description: 'Pick your favorite album and get it customized if you bought at least one of our keychain variants.',
     image: 'assets/albums/album-one.jpg',                // artwork for the fixed background
-    animation: 'assets/albums/mystery.webp',    // cassette image or animation
+    animation: 'assets/albums/mystery.png',    // cassette image or animation
     squareBackground: '#000000',                          // color/gradient behind the cassette
     font: "'Archivo Black', Georgia, serif",         // product font + fallbacks
     theme: { bg: '#f4efe6', text: '#1b3a5c', accent: '#d94f30', accent2: '#1b3a5c', surface: '#f4efe6', surfaceText: '#303036' },
@@ -160,7 +161,7 @@ const PRODUCTS = [
 
 // Products inherit these defaults for anything they do not define. theme {} = use the default theme.
 const PRODUCT_DEFAULTS = {
-  artScale: 1.65,
+  artScale: 1,
   price: 45,
   font: "'Inter', system-ui, sans-serif", squareBackground: '#ddd', theme: {}, image: '', animation: '',
   artRatio: '3 / 2', reels: { src: '', leftX: 0.3, rightX: 0.7, y: 0.42, size: 0.2 }, // see CONFIG.images
@@ -204,6 +205,7 @@ function artFrameHtml(src, alt, ratio, reels) {
     ? [reels.leftX, reels.rightX].map((x) => `<span class="reel" style="left:${x * 100}%;top:${reels.y * 100}%;width:${reels.size * 100}%;background-image:url('${reels.src}')"></span>`).join('')
     : '';
   const image = src ? `<img src="${src}" alt="${alt}" loading="lazy" draggable="false" onload="this.previousElementSibling.remove()" onerror="this.remove()">` : '';
+  const [aw, ah] = String(ratio || '3 / 2').split('/').map(Number);
   return `<div class="art-frame" style="--art-ratio:${ratio || '3 / 2'}"><div class="cassette"><span class="placeholder-label">PLACEHOLDER</span></div>${image}${reelHtml}</div>`;
 }
 
@@ -425,6 +427,7 @@ function renderProducts() {
     article.style.setProperty('--product-font', p.font);
     article.style.setProperty('--square-bg', p.squareBackground);
     article.style.setProperty('--art-scale', p.artScale);
+    if (p.artBreak) article.style.setProperty('--frame-break', p.artBreak);
     if (p.theme.surface) article.style.setProperty('--surface', p.theme.surface);
     if (p.theme.surfaceText) article.style.setProperty('--surface-text', p.theme.surfaceText);
     article.innerHTML = `
@@ -438,6 +441,9 @@ function renderProducts() {
         <div class="marquee" role="group" tabindex="0" aria-label="Songs: ${songs.join(', ')}"><ul class="marquee-track"></ul></div>
       </div>`;
     list.appendChild(article);
+    const visual = article.querySelector('.product-visual');
+    visual.addEventListener('pointerenter', (e) => { if (e.pointerType !== 'touch') visual.classList.add('is-hovered'); });
+    ['pointerleave', 'pointercancel'].forEach((type) => visual.addEventListener(type, () => visual.classList.remove('is-hovered')));
     Marquee.setup(article.querySelector('.marquee'), songs);
   });
 }
@@ -884,36 +890,63 @@ function setupPlayerDrag() {
 const TouchTrail = {
   start() {
     if (!CONFIG.features.touchTrail || reduceMotion || !window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
-    const COUNT = 12, LIFE = 450, points = [], dots = [];
-    let running = false;
+    const COUNT = 12, FOLLOW = 0.35, FADE_MS = 300;
+    const dots = [];
+    let target = { x: 0, y: 0 }, touching = false, alpha = 0, running = false, last = 0;
     for (let i = 0; i < COUNT; i++) {
-      const dot = document.createElement('div');
-      dot.className = 'trail-dot';
-      document.body.appendChild(dot);
-      dots.push(dot);
+      const el = document.createElement('div');
+      el.className = 'trail-dot';
+      document.body.appendChild(el);
+      dots.push({ el, x: 0, y: 0 });
     }
-    const draw = (now) => {
-      let alive = false;
+    const frame = (now) => {
+      const dt = Math.min(now - last, 50);
+      last = now;
+      const ease = 1 - Math.pow(1 - FOLLOW, dt / 16.7);
+      alpha = touching ? 1 : Math.max(0, alpha - dt / FADE_MS);
       dots.forEach((dot, i) => {
-        const p = points[i], life = p ? 1 - (now - p.time) / LIFE : 0;
-        if (life <= 0) { dot.style.opacity = 0; return; }
-        alive = true;
-        dot.style.opacity = life;
-        dot.style.transform = `translate3d(${p.x}px, ${p.y}px, 0) translate(-50%, -50%) scale(${(1 - i / COUNT) * life})`;
+        const lead = i === 0 ? target : dots[i - 1];
+        dot.x += (lead.x - dot.x) * ease;
+        dot.y += (lead.y - dot.y) * ease;
+        const size = 1 - i / COUNT;
+        dot.el.style.opacity = alpha * size;
+        dot.el.style.transform = `translate3d(${dot.x}px, ${dot.y}px, 0) translate(-50%, -50%) scale(${size})`;
       });
-      if (alive) requestAnimationFrame(draw); else running = false;
+      if (touching || alpha > 0) requestAnimationFrame(frame); else running = false;
     };
-    const add = (e) => {
+    const wake = () => { if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); } };
+    window.addEventListener('touchstart', (e) => {
       const t = e.touches[0];
-      if (!t) return;
-      points.unshift({ x: t.clientX, y: t.clientY, time: performance.now() });
-      points.length = Math.min(points.length, COUNT);
-      if (!running) { running = true; requestAnimationFrame(draw); }
-    };
-    window.addEventListener('touchstart', add, { passive: true });
-    window.addEventListener('touchmove', add, { passive: true });
+      target = { x: t.clientX, y: t.clientY };
+      dots.forEach((d) => { d.x = target.x; d.y = target.y; });
+      touching = true;
+      wake();
+    }, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+      const t = e.touches[0];
+      if (t) target = { x: t.clientX, y: t.clientY };
+    }, { passive: true });
+    ['touchend', 'touchcancel'].forEach((type) => window.addEventListener(type, (e) => {
+      if (!e.touches.length) touching = false;
+    }, { passive: true }));
   }
 };
+
+function setupPromo() {
+  const size = CONFIG.keychainSize;
+  const chip = $('#size-toggle'), demo = $('.keychain-demo'), w = $('.dim-w'), h = $('.dim-h');
+  let inches = false;
+  const fmt = (cm) => (inches ? (cm / 2.54).toFixed(2) : cm);
+  const paint = () => {
+    const unit = inches ? 'in' : 'cm';
+    chip.textContent = `${fmt(size.widthCm)} × ${fmt(size.heightCm)} ${unit}`;
+    w.textContent = `${fmt(size.widthCm)} ${unit}`;
+    h.textContent = `${fmt(size.heightCm)} ${unit}`;
+  };
+  demo.style.setProperty('--kc-ratio', size.widthCm / size.heightCm);
+  chip.addEventListener('click', () => { inches = !inches; paint(); });
+  paint();
+}
 
 // actual compilation, genuiene hell HAHHAHAHAHAHHA
 function start() {
@@ -929,6 +962,7 @@ function start() {
 
   renderProducts();
   renderPrices();
+  setupPromo();
   const root = document.documentElement.style;            // intro icon settings
   root.setProperty('--intro-icon-size', CONFIG.intro.iconSize);
   root.setProperty('--intro-gap', CONFIG.intro.iconGap);
